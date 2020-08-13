@@ -48,6 +48,7 @@ class log_tool():
         ax.legend()
         buf = BytesIO()
         plt.savefig(buf, dpi=150)
+        plt.close()
         try:
             self.bucket.put_object(self.log_png, buf.getvalue())
         except Exception as e:
