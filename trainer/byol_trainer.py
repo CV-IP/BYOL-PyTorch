@@ -87,14 +87,13 @@ class BYOLTrainer():
             self.setup_oss_log_files()
 
     def setup_oss_log_files(self):
+        loss_log_file = self.config['log']['loss_log_file'].format(self.time_stamp)
+        loss_log_png = self.config['log']['loss_log_png'].format(self.time_stamp)
+        self.loss_log_tool = log_tool(bucket=self.ckpt_bucket, log_path=loss_log_file, log_png=loss_log_png)
 
-        self.loss_log_file = self.config['log']['loss_log_file'].format(self.time_stamp)
-        self.loss_log_png = self.config['log']['loss_log_png'].format(self.time_stamp)
-        self.loss_log_tool = log_tool(bucket=self.ckpt_bucket, log_path=self.loss_log_file)
-
-        self.lr_log_file = self.config['log']['lr_log_file'].format(self.time_stamp)
-        self.lr_log_png = self.config['log']['lr_log_png'].format(self.time_stamp)
-        self.lr_log_tool = log_tool(bucket=self.ckpt_bucket, log_path=self.lr_log_file)
+        lr_log_file = self.config['log']['lr_log_file'].format(self.time_stamp)
+        lr_log_png = self.config['log']['lr_log_png'].format(self.time_stamp)
+        self.lr_log_tool = log_tool(bucket=self.ckpt_bucket, log_path=lr_log_file, log_png=lr_log_png)
 
     def construct_model(self):
         # get data instance
@@ -247,12 +246,12 @@ class BYOLTrainer():
                 self.logger.update('loss', loss.item(), view1.size(0))
 
                 if self.rank == 0:
-                    self.loss_log_tool.update(self.logger.get_key_val('steps'), self.logger.get_key_val('loss'))
-                    self.lr_log_tool.update(self.logger.get_key_val('steps'), self.logger.get_key_val('lr'))
+                    self.loss_log_tool.update(self.steps, self.logger.get_key_val('loss'))
+                    self.lr_log_tool.update(self.steps, self.logger.get_key_val('lr'))
                     if self.steps % 100 == 0:
-                        self.loss_log_tool.plot(self.loss_log_png, x_label='steps', y_label='loss', label='loss')
+                        self.loss_log_tool.plot(x_label='steps', y_label='loss')
                         self.loss_log_tool.save_log()
-                        self.lr_log_tool.plot(self.lr_log_png, x_label='steps', y_label='lr', label='lr')
+                        self.lr_log_tool.plot(x_label='steps', y_label='lr')
                         self.lr_log_tool.save_log()
             log_time.update(time.time() - tflag)
 

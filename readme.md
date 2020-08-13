@@ -18,7 +18,7 @@ This repo supposes using `torch.distributed.launch` to start training, for examp
 python -m torch.distributed.launch --nproc_per_node=2 --nnodes=2 --node_rank=0 --master_addr="" --master_port=12345 byol_main.py
 ```
 
-There are a lot of redundant code for [OSS](https://cn.aliyun.com/product/oss) loading/saving checkpoint/log files. You can simply them to local storage.
+There are a lot of redundant code for [OSS](https://cn.aliyun.com/product/oss) loading/saving checkpoint/log files. You can simplify them to local storage.
 
 ## Implementation Details
 
