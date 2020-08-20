@@ -2,6 +2,7 @@
 
 PyTorch implementation of [Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning](https://arxiv.org/abs/2006.07733) with DDP (DistributedDataParallel) and [Apex](https://github.com/NVIDIA/apex) Amp (Automatic Mixed Precision).
 
+
 ## Requirements
 
 ```
@@ -20,6 +21,7 @@ python -m torch.distributed.launch --nproc_per_node=2 --nnodes=2 --node_rank=0 -
 
 There are a lot of redundant code for [OSS](https://cn.aliyun.com/product/oss) loading/saving checkpoint/log files. You can simplify them to local storage.
 
+
 ## Implementation Details
 
 1. Use `apex` or `pytorch>=1.4.0` for `SyncBatchNorm`
@@ -28,6 +30,7 @@ There are a lot of redundant code for [OSS](https://cn.aliyun.com/product/oss) l
 4. Increase target model momentum factor with a cosine rule
 5. Exclude `biases` and `batch normalization` parameters from both `LARS adaptation` and `weight decay`
 6. The correct order for model wrapping: `convert_syncbn` -> `cuda` -> `amp.initialize` -> `DDP`
+
 
 ## Reproduced Results
 
@@ -44,3 +47,14 @@ Under this setup, reference accuracies for 300 epochs are 72.5% (top-1) and 90.8
 | 200         | 120                    | [1., 0.05]/Cosine | 68.8%     | 89.1%     |
 | 250         | 120                    | [1., 0.05]/Cosine | 70.9%     | 90.2%     |
 | 300         | 120                    | [1., 0.05]/Cosine | 71.7%     | 90.8%     |
+
+
+## Model Checkpoints
+
+We release our BYOL checkpoint of ResNet-50 model trained on ImageNet (ILSVRC 2012) for 300 epochs on [Google Drive](https://drive.google.com/file/d/1TLZHDbV-qQlLjkR8P0LZaxzwEE6O_7g1/view?usp=sharing).
+
+Note:
+This checkpoint file is created using code under the tag `v1.0`, which saves the `online_network`, `target_network`, and `predictor` separately. And the parameter names are slightly different from `ResNet50` in `torchvision.models`.
+Concretely, parameters that start with `module.encoder` in `checkpoint['online_network']` is probably what you want.
+
+You can refer to [utils/load_and_convert.py](./utils/load_and_convert.py) for the parameter name agnostic loading and converting (to torchscript).
