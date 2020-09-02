@@ -5,7 +5,6 @@ import datetime
 
 import numpy as np
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
 import oss2 as oss
@@ -15,11 +14,10 @@ from apex.parallel import DistributedDataParallel as DDP
 from apex import amp
 
 from model import BYOLModel
-from optimizer.LARSSGD import LARS
-from data.imagenet_loader import ImageNetLoader
-from data.oss_imagenet_loader import OssImageLoader
-from utils.logging_util import log_tool
+from optimizer import LARS
+from data import ImageNetLoader, OssImageLoader
 from utils import params_util, logging_util
+from utils.logging_util import log_tool
 import utils.evaluation_util as eval_util
 from utils.data_prefetcher import data_prefetcher
 
@@ -44,8 +42,9 @@ class BYOLTrainer():
         self.val_batch_size = self.config['data']['val_batch_size']
         self.global_batch_size = self.world_size * self.train_batch_size
 
-        self.warmup_steps = self.warmup_epochs * 1281167 // self.global_batch_size
-        self.total_steps = self.total_epochs * 1281167 // self.global_batch_size
+        self.num_examples = self.config['data']['num_examples']
+        self.warmup_steps = self.warmup_epochs * self.num_examples // self.global_batch_size
+        self.total_steps = self.total_epochs * self.num_examples // self.global_batch_size
 
         base_lr = self.config['optimizer']['base_lr'] / 256
         self.max_lr = base_lr * self.global_batch_size
@@ -161,7 +160,7 @@ class BYOLTrainer():
                      'model': self.model.state_dict(),
                      'optimizer': self.optimizer.state_dict(),
                      'amp': amp.state_dict()
-                     }
+                    }
             prefix = self.ckpt_prefix.format(epoch)
             snapshot_buf = BytesIO()
             torch.save(state, snapshot_buf)
@@ -193,7 +192,6 @@ class BYOLTrainer():
         loss = 2 - 2 * (preds_norm * targets_norm).sum() / bz
         return loss
 
-    ## train the network in all data for one epoch
     def train_epoch(self, epoch, printer=print):
         batch_time = eval_util.AverageMeter()
         data_time = eval_util.AverageMeter()

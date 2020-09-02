@@ -40,13 +40,11 @@ Here we post our reproduced results with hyper parameters in [train_config.yaml]
 
 Under this setup, reference accuracies for 300 epochs are 72.5% (top-1) and 90.8% (top-5), as reported in Section F of the paper.
 
-| Train Epoch | Classifier Train Epoch | Classifier LR     | Top-1 ACC | Top-5 ACC |
-|-------------|------------------------|-------------------|-----------|-----------|
-| 100         | 120                    | [1., 0.05]/Cosine | 63.2%     | 85.1%     |
-| 150         | 120                    | [1., 0.05]/Cosine | 66.6%     | 87.6%     |
-| 200         | 120                    | [1., 0.05]/Cosine | 68.8%     | 89.1%     |
-| 250         | 120                    | [1., 0.05]/Cosine | 70.9%     | 90.2%     |
-| 300         | 120                    | [1., 0.05]/Cosine | 71.7%     | 90.8%     |
+| Train Epoch | Classifier Train Epoch | Classifier LR   | Top-1 ACC | Top-5 ACC |
+|-------------|------------------------|-----------------|-----------|-----------|
+| 100         | 100                    | [1., 0.]/Cosine | 64.34%    | 85.95%    |
+| 200         | 100                    | [1., 0.]/Cosine | 69.48%    | 89.07%    |
+| 300         | 100                    | [1., 0.]/Cosine | 72.29%    | 90.90%    |
 
 
 ## Model Checkpoints

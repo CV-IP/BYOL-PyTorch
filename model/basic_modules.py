@@ -1,16 +1,32 @@
 #-*- coding:utf-8 -*-
 import torch
+import torch.nn as nn
 from torchvision import models
-from .mlp import MLP
 
-class EncoderwithProjection(torch.nn.Module):
+class MLP(nn.Module):
+    def __init__(self, input_dim, hidden_dim, output_dim):
+        super().__init__()
+
+        self.l1 = nn.Linear(input_dim, hidden_dim)
+        self.bn1 = nn.BatchNorm1d(hidden_dim)
+        self.relu1 = nn.ReLU(inplace=True)
+        self.l2 = nn.Linear(hidden_dim, output_dim)
+
+    def forward(self, x):
+        x = self.l1(x)
+        x = self.bn1(x)
+        x = self.relu1(x)
+        x = self.l2(x)
+        return x
+
+class EncoderwithProjection(nn.Module):
     def __init__(self, config):
         super().__init__()
         # backbone
         pretrained = config['model']['backbone']['pretrained']
         net_name = config['model']['backbone']['type']
         base_encoder = models.__dict__[net_name](pretrained=pretrained)
-        self.encoder = torch.nn.Sequential(*list(base_encoder.children())[:-1])
+        self.encoder = nn.Sequential(*list(base_encoder.children())[:-1])
 
         # projection
         input_dim = config['model']['projection']['input_dim']
@@ -24,7 +40,7 @@ class EncoderwithProjection(torch.nn.Module):
         x = self.projetion(x)
         return x
 
-class Predictor(torch.nn.Module):
+class Predictor(nn.Module):
     def __init__(self, config):
         super().__init__()
 

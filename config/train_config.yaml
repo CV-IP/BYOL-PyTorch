@@ -1,5 +1,5 @@
 model:
-  base_momentum: 0.996
+  base_momentum: 0.99
   backbone:
     type: "resnet50"
     pretrained: false
@@ -26,6 +26,7 @@ data:
   train_batch_size: 128
   val_batch_size: 64
   dual_views: true
+  num_examples: 1281167
   # for oss
   train_list: "imagenet/imagenet_train_fullpath.txt"
   val_list: "imagenet/imagenet_val_fullpath.txt"
@@ -38,7 +39,7 @@ optimizer:
   type: lars
   base_lr: 0.3
   momentum: 0.9
-  weight_decay: 1.5e-6
+  weight_decay: 1.0e-6
   total_epochs: 300
   warmup_epochs: 10
   exclude_bias_and_bn: true

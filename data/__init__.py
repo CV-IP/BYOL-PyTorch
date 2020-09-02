@@ -1,0 +1,2 @@
+from .imagenet_loader import ImageNetLoader
+from .oss_imagenet_loader import OssImageLoader
