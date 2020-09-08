@@ -52,7 +52,7 @@ Under this setup, reference accuracies for 300 epochs are 72.5% (top-1) and 90.8
 We release our BYOL checkpoint of ResNet-50 model trained on ImageNet (ILSVRC 2012) for 300 epochs on [Google Drive](https://drive.google.com/file/d/1TLZHDbV-qQlLjkR8P0LZaxzwEE6O_7g1/view?usp=sharing).
 
 Note:
-This checkpoint file is created using code under the tag `v1.0`, which saves the `online_network`, `target_network`, and `predictor` separately. And the parameter names are slightly different from `ResNet50` in `torchvision.models`.
-Concretely, parameters that start with `module.encoder` in `checkpoint['online_network']` is probably what you want.
+This checkpoint file is created using legacy codebase, which saves the `online_backbone`, `online_projection`, `predictor` and target network modules separately. And the parameter names are slightly different from `ResNet50` in `torchvision.models`.
+Concretely, parameters in `checkpoint['online_backbone']` is probably what you want, from `conv1` to `avgpool`, yielding 318 parameters.
 
 You can refer to [utils/load_and_convert.py](./utils/load_and_convert.py) for the parameter name agnostic loading and converting (to torchscript).

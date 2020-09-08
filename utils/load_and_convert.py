@@ -23,7 +23,7 @@ model = ResNet('resnet50', pretrained=False, use_fc=False).to(device)
 
 # load encoder
 model_path = 'resnet50_byol_imagenet2012.pth.tar'
-checkpoint = torch.load(model_path, map_location=device)['online_network']
+checkpoint = torch.load(model_path, map_location=device)['online_backbone']
 state_dict = {}
 length = len(model.encoder.state_dict())
 for name, param in zip(model.encoder.state_dict(), list(checkpoint.values())[:length]):
